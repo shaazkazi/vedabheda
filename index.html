@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="kn">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>ವೇದಭೇದ - ಲೇಖನ</title>
+        <!-- Add Google Fonts link for Baloo Tamma 2 -->
+        <link rel="preconnect" href="https://fonts.googleapis.com">
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link href="https://fonts.googleapis.com/css2?family=Baloo+Tamma+2:wght@400;500;600;700&display=swap" rel="stylesheet">
+        <link rel="stylesheet" href="assets/css/style.css">
+        <!-- Add Supabase JS Library -->
+        <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+        <script src="assets/js/config.js"></script>
+        <script src="assets/js/script.js" defer></script>
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    </head>
+    <!-- Rest of your HTML remains the same -->
+<body>
+    <header>
+        <div class="logo">
+            <h1>ವೇದಭೇದ</h1>
+            <p>Islamic & Hindu Studies</p>
+        </div>
+        <nav>
+            <button id="menuToggle"><i class="fas fa-bars"></i></button>
+            <ul class="nav-menu">
+                <li><a href="index.html" class="active">ಮುಖಪುಟ</a></li>
+                <li><a href="#" class="category" data-category="islam">ಇಸ್ಲಾಂ</a></li>
+                <li><a href="#" class="category" data-category="hindu">ಹಿಂದೂ</a></li>
+                <li><a href="#" class="category" data-category="comparative">ತುಲನಾತ್ಮಕ</a></li>
+                <li><a href="about.html">ನಮ್ಮ ಬಗ್ಗೆ</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <section class="hero">
+        <div class="hero-content">
+            <h2>ಇಸ್ಲಾಮಿಕ್ ಮತ್ತು ಹಿಂದೂ ಸಂಸ್ಕೃತಿಗಳ ಬಗ್ಗೆ ಆಳವಾದ ತಿಳುವಳಿಕೆಯನ್ನು ಪಡೆಯಿರಿ</h2>
+            <p>ಎರಡೂ ಧರ್ಮಗಳ ತತ್ವಶಾಸ್ತ್ರ, ಅಧ್ಯಾತ್ಮಿಕತೆ ಮತ್ತು ನಂಬಿಕೆಗಳ ಬಗ್ಗೆ ವಿದ್ವಾಂಸರ ದೃಷ್ಟಿಕೋನಗಳನ್ನು ಅನ್ವೇಷಿಸಿ</p>
+            <div class="search-container">
+                <input type="text" id="searchInput" placeholder="ಲೇಖನಗಳನ್ನು ಹುಡುಕಿ...">
+                <button id="searchButton"><i class="fas fa-search"></i></button>
+            </div>
+        </div>
+    </section>
+
+    <div class="category-filters">
+        <button class="filter active" data-filter="all">ಎಲ್ಲವೂ</button>
+        <button class="filter" data-filter="islam">ಇಸ್ಲಾಂ</button>
+        <button class="filter" data-filter="hindu">ಹಿಂದೂ</button>
+        <button class="filter" data-filter="comparative">ತುಲನಾತ್ಮಕ</button>
+    </div>
+
+    <main>
+        <div id="postContainer" class="post-grid">
+            <!-- Posts will be loaded dynamically -->
+        </div>
+
+        <div class="pagination">
+            <button id="prevPage"><i class="fas fa-chevron-left"></i></button>
+            <span id="currentPage">1</span>
+            <button id="nextPage"><i class="fas fa-chevron-right"></i></button>
+        </div>
+    </main>
+
+    <footer>
+        <div class="footer-content">
+            <div class="footer-section">
+                <h3>ವೇದಾಭೇದ</h3>
+                <p>ಇಸ್ಲಾಮಿಕ್ ಮತ್ತು ಹಿಂದೂ ಅಧ್ಯಯನಗಳ ಒಂದು ಸಮಗ್ರ ವೇದಿಕೆ. ಧಾರ್ಮಿಕ ಸಹಿಷ್ಣುತೆ ಮತ್ತು ಅಂತರ-ಧಾರ್ಮಿಕ ಸಂವಾದವನ್ನು ಉತ್ತೇಜಿಸುವುದು ನಮ್ಮ ಗುರಿಯಾಗಿದೆ.</p>
+                <div class="social-icons">
+                    <a href="#"><i class="fab fa-facebook-f"></i></a>
+                    <a href="#"><i class="fab fa-twitter"></i></a>
+                    <a href="#"><i class="fab fa-instagram"></i></a>
+                    <a href="#"><i class="fab fa-youtube"></i></a>
+                </div>
+            </div>
+            
+            <div class="footer-section">
+                <h3>ಉಪಯುಕ್ತ ಲಿಂಕ್‌ಗಳು</h3>
+                <ul>
+                    <li><a href="index.html">ಮುಖಪುಟ</a></li>
+                    <li><a href="about.html">ನಮ್ಮ ಬಗ್ಗೆ</a></li>
+                    <li><a href="#">ಸಂಪರ್ಕಿಸಿ</a></li>
+                    <li><a href="#">ನಿಯಮಗಳು & ಷರತ್ತುಗಳು</a></li>
+                    <li><a href="#">ಗೌಪ್ಯತಾ ನೀತಿ</a></li>
+                </ul>
+            </div>
+            
+            <div class="footer-section">
+                <h3>ಇತ್ತೀಚಿನ ಪೋಸ್ಟ್‌ಗಳು</h3>
+                <ul>
+                    <li><a href="post.html?id=1">ಇಸ್ಲಾಂ ಮತ್ತು ಹಿಂದೂ ಧರ್ಮದಲ್ಲಿ ಏಕದೇವೋಪಾಸನೆ</a></li>
+                    <li><a href="post.html?id=2">ಕುರಾನ್ ಮತ್ತು ವೇದಗಳಲ್ಲಿ ಜ್ಞಾನದ ಮಹತ್ವ</a></li>
+                    <li><a href="post.html?id=3">ಶ್ರೀಕೃಷ್ಣನ ಜೀವನದಿಂದ ಪ್ರಮುಖ ಪಾಠಗಳು</a></li>
+                </ul>
+            </div>
+            
+            <div class="footer-section">
+                <h3>ನಮ್ಮ ನ್ಯೂಸ್‌ಲೆಟರ್‌ಗೆ ಸೇರಿ</h3>
+                <p>ನಮ್ಮ ಇತ್ತೀಚಿನ ಲೇಖನಗಳು ಮತ್ತು ಅಪ್‌ಡೇಟ್‌ಗಳನ್ನು ಪಡೆಯಲು ಸಬ್‌ಸ್ಕ್ರೈಬ್ ಮಾಡಿ.</p>
+                <form class="newsletter-form">
+                    <input type="email" placeholder="ನಿಮ್ಮ ಇಮೇಲ್ ವಿಳಾಸ" required>
+                    <button type="submit">ಸಬ್‌ಸ್ಕ್ರೈಬ್</button>
+                </form>
+            </div>
+        </div>

@@ -1,0 +1,821 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ವೇದಾಭೇದ - Post Editor</title>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="/assets/js/config.js"></script>
+    <!-- Add Quill.js -->
+    <link href="https://cdn.quilljs.com/1.3.6/quill.snow.css" rel="stylesheet">
+    <script src="https://cdn.quilljs.com/1.3.6/quill.min.js"></script>
+    <style>
+        :root {
+            --primary-color: #3498db;
+            --secondary-color: #2c3e50;
+            --success-color: #27ae60;
+            --warning-color: #e67e22;
+            --danger-color: #e74c3c;
+            --light-bg: #f5f5f5;
+            --dark-text: #333;
+            --border-color: #ddd;
+        }
+        
+        body {
+            font-family: 'Noto Sans Kannada', Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background-color: var(--light-bg);
+            color: var(--dark-text);
+            line-height: 1.6;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        
+        header {
+            text-align: center;
+            margin-bottom: 30px;
+            padding-bottom: 20px;
+            border-bottom: 1px solid var(--border-color);
+        }
+        
+        header h1 {
+            color: var(--secondary-color);
+            margin-bottom: 10px;
+        }
+        
+        .tabs {
+            display: flex;
+            margin-bottom: 20px;
+            border-bottom: 1px solid var(--border-color);
+        }
+        
+        .tab {
+            padding: 10px 20px;
+            cursor: pointer;
+            border: 1px solid transparent;
+            border-bottom: none;
+            border-radius: 5px 5px 0 0;
+            margin-right: 5px;
+            background: #eee;
+        }
+        
+        .tab.active {
+            background: white;
+            border-color: var(--border-color);
+            border-bottom: 1px solid white;
+            margin-bottom: -1px;
+            font-weight: bold;
+        }
+        
+        .tab-content {
+            display: none;
+        }
+        
+        .tab-content.active {
+            display: block;
+        }
+        
+        form {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+        
+        .full-width {
+            grid-column: 1 / span 2;
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+        
+        input, select, textarea {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid var(--border-color);
+            border-radius: 4px;
+            box-sizing: border-box;
+            font-family: inherit;
+            font-size: 16px;
+        }
+        
+        textarea {
+            min-height: 150px;
+        }
+        
+        /* Quill editor styling */
+        #editor-container {
+            height: 400px;
+            margin-bottom: 20px;
+        }
+        
+        .ql-editor {
+            min-height: 300px;
+            font-family: 'Noto Sans Kannada', Arial, sans-serif;
+        }
+        
+        button {
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            padding: 12px 20px;
+            cursor: pointer;
+            border-radius: 4px;
+            font-size: 16px;
+            transition: background-color 0.3s;
+        }
+        
+        button:hover {
+            background-color: #2980b9;
+        }
+        
+        .btn-success {
+            background-color: var(--success-color);
+        }
+        
+        .btn-success:hover {
+            background-color: #219955;
+        }
+        
+        .btn-danger {
+            background-color: var(--danger-color);
+        }
+        
+        .btn-danger:hover {
+            background-color: #c0392b;
+        }
+        
+        .preview {
+            border: 1px solid var(--border-color);
+            padding: 20px;
+            margin-top: 20px;
+            border-radius: 4px;
+            background-color: white;
+        }
+        
+        .preview-title {
+            color: var(--secondary-color);
+            margin-top: 0;
+        }
+        
+        .message {
+            padding: 15px;
+            margin: 20px 0;
+            border-radius: 4px;
+            display: none;
+        }
+        
+        .message.success {
+            background-color: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+        
+        .message.error {
+            background-color: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+        
+        .post-list {
+            list-style: none;
+            padding: 0;
+        }
+        
+        .post-item {
+            border: 1px solid var(--border-color);
+            margin-bottom: 15px;
+            padding: 15px;
+            border-radius: 4px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .post-info {
+            flex: 1;
+        }
+        
+        .post-item h3 {
+            margin: 0 0 5px 0;
+        }
+        
+        .post-meta {
+            color: #666;
+            font-size: 14px;
+        }
+        
+        .post-actions {
+            display: flex;
+            gap: 10px;
+        }
+        
+        .post-actions button {
+            padding: 8px 15px;
+            font-size: 14px;
+        }
+        
+        .tag-list {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-top: 10px;
+        }
+        
+        .tag {
+            background: #eee;
+            padding: 5px 10px;
+            border-radius: 20px;
+            font-size: 14px;
+        }
+        
+        #tagsInput {
+            width: 100%;
+        }
+        
+        .auth-container {
+            max-width: 400px;
+            margin: 50px auto;
+            padding: 20px;
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        
+        .editor-container {
+            display: none;
+        }
+        
+        .user-info {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 20px;
+            padding-top: 10px;
+            border-top: 1px solid var(--border-color);
+        }
+        
+        @media (max-width: 768px) {
+            form {
+                grid-template-columns: 1fr;
+            }
+            
+            .full-width {
+                grid-column: 1;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="auth-container" id="authContainer">
+        <header>
+            <h1>ವೇದಾಭೇದ - Login</h1>
+            <p>Please log in to manage posts</p>
+        </header>
+        
+        <div class="message" id="authMessage"></div>
+        
+        <form id="loginForm">
+            <div>
+                <label for="email">Email:</label>
+                <input type="email" id="email" required>
+            </div>
+            
+            <div>
+                <label for="password">Password:</label>
+                <input type="password" id="password" required>
+            </div>
+            
+            <div>
+                <button type="submit" class="btn-success">Login</button>
+            </div>
+        </form>
+    </div>
+
+    <div class="container editor-container" id="editorContainer">
+        <header>
+            <h1>ವೇದಾಭೇದ - Post Management</h1>
+            <p>Create, edit, and manage posts for your website</p>
+            <div class="user-info">
+                <span>Logged in as: <strong id="userEmail"></strong></span>
+                <button id="logoutBtn" class="btn-danger">Logout</button>
+            </div>
+        </header>
+        
+        <div class="tabs">
+            <div class="tab active" data-tab="create">Create Post</div>
+            <div class="tab" data-tab="manage">Manage Posts</div>
+        </div>
+        
+        <div class="message" id="message"></div>
+        
+        <div class="tab-content active" id="create-tab">
+            <form id="postForm">
+                <div>
+                    <label for="title">Title:</label>
+                    <input type="text" id="title" required>
+                </div>
+                
+                <div>
+                    <label for="category">Category:</label>
+                    <select id="category" required>
+                        <option value="">Select a category</option>
+                        <option value="islam">ಇಸ್ಲಾಂ</option>
+                        <option value="hindu">ಹಿಂದೂ</option>
+                        <option value="comparative">ತುಲನಾತ್ಮಕ</option>
+                    </select>
+                </div>
+                
+                <div>
+                    <label for="excerpt">Excerpt:</label>
+                    <textarea id="excerpt" required></textarea>
+                </div>
+                
+                <div>
+                    <label for="author">Author:</label>
+                    <input type="text" id="author" required>
+                </div>
+                
+                <div>
+                    <label for="image">Image URL:</label>
+                    <input type="text" id="image" placeholder="assets/images/example.jpg" required>
+                </div>
+                
+                <div>
+                    <label for="date">Date:</label>
+                    <input type="date" id="date" required>
+                </div>
+                
+                <div class="full-width">
+                    <label for="editor-container">Content:</label>
+                    <div id="editor-container"></div>
+                    <input type="hidden" id="content">
+                </div>
+                
+                <div class="full-width">
+                    <label for="tagsInput">Tags (comma separated):</label>
+                    <input type="text" id="tagsInput" placeholder="tag1, tag2, tag3">
+                </div>
+                
+                <div class="full-width">
+                    <button type="button" id="previewBtn">Preview</button>
+                    <button type="submit" class="btn-success">Save Post</button>
+                </div>
+            </form>
+            
+            <div class="preview" id="preview" style="display: none;">
+                <h2 class="preview-title">Preview</h2>
+                <div id="previewContent"></div>
+            </div>
+        </div>
+        
+        <div class="tab-content" id="manage-tab">
+            <h2>All Posts</h2>
+            <button id="refreshPosts" class="btn-success">Refresh Posts</button>
+            <ul class="post-list" id="postList">
+                <!-- Posts will be loaded here -->
+                <li>Loading posts...</li>
+            </ul>
+        </div>
+    </div>
+
+    <script>
+        // Initialize Supabase client
+        // Use the externalized config
+        const supabaseClient = supabase.createClient(CONFIG.SUPABASE_URL, CONFIG.SUPABASE_ANON_KEY);
+
+        // Initialize Quill editor
+        var quill = new Quill('#editor-container', {
+            modules: {
+                toolbar: [
+                    [{ 'header': [1, 2, 3, 4, 5, 6, false] }],
+                    ['bold', 'italic', 'underline', 'strike'],
+                    [{ 'list': 'ordered'}, { 'list': 'bullet' }],
+                    [{ 'script': 'sub'}, { 'script': 'super' }],
+                    [{ 'indent': '-1'}, { 'indent': '+1' }],
+                    [{ 'direction': 'rtl' }],
+                    [{ 'color': [] }, { 'background': [] }],
+                    [{ 'align': [] }],
+                    ['blockquote', 'code-block'],
+                    ['link', 'image', 'video'],
+                    ['clean']
+                ]
+            },
+            placeholder: 'Write your content here...',
+            theme: 'snow'  // or 'bubble'
+        });
+
+        // DOM Elements
+        const authContainer = document.getElementById('authContainer');
+        const editorContainer = document.getElementById('editorContainer');
+        const loginForm = document.getElementById('loginForm');
+        const authMessage = document.getElementById('authMessage');
+        const userEmail = document.getElementById('userEmail');
+        const logoutBtn = document.getElementById('logoutBtn');
+        const postForm = document.getElementById('postForm');
+        const previewBtn = document.getElementById('previewBtn');
+        const preview = document.getElementById('preview');
+        const previewContent = document.getElementById('previewContent');
+        const messageDiv = document.getElementById('message');
+        const tabs = document.querySelectorAll('.tab');
+        const tabContents = document.querySelectorAll('.tab-content');
+        const postList = document.getElementById('postList');
+        const refreshPostsBtn = document.getElementById('refreshPosts');
+        
+        // Check authentication status on page load
+        document.addEventListener('DOMContentLoaded', async function() {
+            console.log("Post editor loaded, checking auth...");
+            
+            const { data: { user } } = await supabaseClient.auth.getUser();
+            
+            if (user) {
+                console.log("User is authenticated:", user.email);
+                showEditor(user);
+            } else {
+                console.log("User is not authenticated");
+                showLogin();
+            }
+        });
+        
+        // Login form submission
+        loginForm.addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+            
+            try {
+                showAuthMessage('Logging in...', 'info');
+                
+                const { data, error } = await supabaseClient.auth.signInWithPassword({
+                    email: email,
+                    password: password
+                });
+                
+                if (error) throw error;
+                
+                console.log("Login successful:", data.user);
+                showEditor(data.user);
+            } catch (error) {
+                console.error("Login error:", error);
+                showAuthMessage('Login failed: ' + error.message, 'error');
+            }
+        });
+        
+        // Logout button
+        logoutBtn.addEventListener('click', async function() {
+            try {
+                const { error } = await supabaseClient.auth.signOut();
+                if (error) throw error;
+                
+                console.log("Logout successful");
+                showLogin();
+            } catch (error) {
+                console.error("Logout error:", error);
+                showMessage('Logout failed: ' + error.message, 'error');
+            }
+        });
+        
+        // Show login form
+        function showLogin() {
+            authContainer.style.display = 'block';
+            editorContainer.style.display = 'none';
+        }
+        
+        // Show editor after successful login
+        function showEditor(user) {
+            authContainer.style.display = 'none';
+            editorContainer.style.display = 'block';
+            userEmail.textContent = user.email;
+        }
+        
+        // Show auth message
+        function showAuthMessage(text, type) {
+            authMessage.textContent = text;
+            authMessage.className = `message ${type}`;
+            authMessage.style.display = 'block';
+            
+            // Auto-hide after 5 seconds
+            setTimeout(() => {
+                authMessage.style.display = 'none';
+            }, 5000);
+        }
+        
+        // Tab switching
+        tabs.forEach(tab => {
+            tab.addEventListener('click', function() {
+                // Update active tab
+                tabs.forEach(t => t.classList.remove('active'));
+                this.classList.add('active');
+                
+                // Show corresponding content
+                const tabName = this.getAttribute('data-tab');
+                tabContents.forEach(content => {
+                    content.classList.remove('active');
+                });
+                document.getElementById(`${tabName}-tab`).classList.add('active');
+                
+                // Load posts when switching to manage tab
+                if (tabName === 'manage') {
+                    loadPosts();
+                }
+            });
+        });
+        
+        // Post form submission
+        postForm.addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            // Get form data
+            const title = document.getElementById('title').value;
+            const category = document.getElementById('category').value;
+            const excerpt = document.getElementById('excerpt').value;
+            const author = document.getElementById('author').value;
+            const image = document.getElementById('image').value;
+            const date = document.getElementById('date').value;
+            
+            // Get content from Quill editor
+            const content = quill.root.innerHTML;
+            
+            // Split tags by comma and trim whitespace
+            const tagsString = document.getElementById('tagsInput').value;
+            const tags = tagsString ? tagsString.split(',').map(tag => tag.trim()) : [];
+            
+            // Validate form data
+            if (!title || !category || !excerpt || !author || !image || !date || !content) {
+                showMessage('Please fill in all required fields', 'error');
+                return;
+            }
+            
+            try {
+                showMessage('Saving post...', 'info');
+                
+                // Check if we're updating an existing post
+                const postId = postForm.getAttribute('data-post-id');
+                let result;
+                
+                if (postId) {
+                    // Update existing post
+                    result = await supabaseClient
+                        .from('posts')
+                        .update({
+                            title,
+                            category,
+                            excerpt,
+                            author,
+                            image,
+                            date,
+                            content,
+                            tags,
+                            updated_at: new Date().toISOString()
+                        })
+                        .eq('id', postId);
+                    
+                    if (result.error) throw result.error;
+                    showMessage('Post updated successfully!', 'success');
+                } else {
+                    // Create new post
+                    result = await supabaseClient
+                        .from('posts')
+                        .insert([
+                            {
+                                title,
+                                category,
+                                excerpt,
+                                author,
+                                image,
+                                date,
+                                content,
+                                tags,
+                                created_at: new Date().toISOString(),
+                                updated_at: new Date().toISOString()
+                            }
+                        ]);
+                    
+                    if (result.error) throw result.error;
+                    showMessage('Post created successfully!', 'success');
+                }
+                
+                // Reset form
+                postForm.reset();
+                postForm.removeAttribute('data-post-id');
+                quill.root.innerHTML = '';
+                
+                // Switch to manage tab
+                document.querySelector('.tab[data-tab="manage"]').click();
+            } catch (error) {
+                console.error("Error saving post:", error);
+                showMessage('Error saving post: ' + error.message, 'error');
+            }
+        });
+        
+        // Preview button
+        previewBtn.addEventListener('click', function() {
+            // Get form data for preview
+            const title = document.getElementById('title').value;
+            const excerpt = document.getElementById('excerpt').value;
+            const content = quill.root.innerHTML;
+            
+            // Display preview
+            previewContent.innerHTML = `
+                <h2>${title || 'Post Title'}</h2>
+                <p><em>${excerpt || 'Post excerpt...'}</em></p>
+                <div class="content">${content || 'Post content...'}</div>
+            `;
+            
+            preview.style.display = 'block';
+            preview.scrollIntoView({ behavior: 'smooth' });
+        });
+        
+        // Load posts from Supabase
+        async function loadPosts() {
+            try {
+                console.log("Loading posts...");
+                postList.innerHTML = '<li>Loading posts...</li>';
+                
+                const { data, error } = await supabaseClient
+                    .from('posts')
+                    .select('*')
+                    .order('created_at', { ascending: false });
+                
+                if (error) throw error;
+                
+                if (!data || data.length === 0) {
+                    postList.innerHTML = '<li>No posts found</li>';
+                    return;
+                }
+                
+                console.log(`Loaded ${data.length} posts`);
+                postList.innerHTML = '';
+                
+                data.forEach(post => {
+                    const li = document.createElement('li');
+                    li.className = 'post-item';
+                    
+                    let categoryLabel = '';
+                    switch(post.category) {
+                        case 'islam':
+                            categoryLabel = 'ಇಸ್ಲಾಂ';
+                            break;
+                        case 'hindu':
+                            categoryLabel = 'ಹಿಂದೂ';
+                            break;
+                        case 'comparative':
+                            categoryLabel = 'ತುಲನಾತ್ಮಕ';
+                            break;
+                    }
+                    
+                    let tagsHTML = '';
+                    if (post.tags && post.tags.length > 0) {
+                        tagsHTML = '<div class="tag-list">';
+                        post.tags.forEach(tag => {
+                            tagsHTML += `<span class="tag">${tag}</span>`;
+                        });
+                        tagsHTML += '</div>';
+                    }
+                    
+                    li.innerHTML = `
+                        <div class="post-info">
+                            <h3>${post.title}</h3>
+                            <div class="post-meta">
+                                <span>${categoryLabel} | ${post.date} | ${post.author}</span>
+                            </div>
+                            ${tagsHTML}
+                        </div>
+                        <div class="post-actions">
+                            <button class="edit-post" data-id="${post.id}">Edit</button>
+                            <button class="delete-post btn-danger" data-id="${post.id}">Delete</button>
+                        </div>
+                    `;
+                    
+                    postList.appendChild(li);
+                });
+                
+                // Add event listeners to edit and delete buttons
+                document.querySelectorAll('.edit-post').forEach(button => {
+                    button.addEventListener('click', function() {
+                        const postId = this.getAttribute('data-id');
+                        editPost(postId);
+                    });
+                });
+                
+                document.querySelectorAll('.delete-post').forEach(button => {
+                    button.addEventListener('click', function() {
+                        const postId = this.getAttribute('data-id');
+                        deletePost(postId);
+                    });
+                });
+                
+            } catch (error) {
+                console.error("Error loading posts:", error);
+                postList.innerHTML = `<li>Error loading posts: ${error.message}</li>`;
+            }
+        }
+        
+        // Edit post
+        async function editPost(postId) {
+            try {
+                console.log(`Editing post: ${postId}`);
+                showMessage('Loading post...', 'info');
+                
+                const { data, error } = await supabaseClient
+                    .from('posts')
+                    .select('*')
+                    .eq('id', postId)
+                    .single();
+                
+                if (error) throw error;
+                
+                if (!data) {
+                    showMessage('Post not found', 'error');
+                    return;
+                }
+                
+                // Fill form with post data
+                document.getElementById('title').value = data.title;
+                document.getElementById('category').value = data.category;
+                document.getElementById('excerpt').value = data.excerpt;
+                document.getElementById('author').value = data.author;
+                document.getElementById('image').value = data.image;
+                document.getElementById('date').value = data.date;
+                
+                // Set content in Quill editor
+                quill.root.innerHTML = data.content;
+                
+                // Set tags
+                if (data.tags && data.tags.length > 0) {
+                    document.getElementById('tagsInput').value = data.tags.join(', ');
+                } else {
+                    document.getElementById('tagsInput').value = '';
+                }
+                
+                // Set post ID on form for update
+                postForm.setAttribute('data-post-id', postId);
+                
+                // Switch to create tab
+                document.querySelector('.tab[data-tab="create"]').click();
+                
+                showMessage('Post loaded for editing', 'success');
+            } catch (error) {
+                console.error("Error loading post for edit:", error);
+                showMessage('Error loading post: ' + error.message, 'error');
+            }
+        }
+        
+        // Delete post
+        async function deletePost(postId) {
+            if (!confirm('Are you sure you want to delete this post? This action cannot be undone.')) {
+                return;
+            }
+            
+            try {
+                console.log(`Deleting post: ${postId}`);
+                showMessage('Deleting post...', 'info');
+                
+                const { error } = await supabaseClient
+                    .from('posts')
+                    .delete()
+                    .eq('id', postId);
+                
+                if (error) throw error;
+                
+                showMessage('Post deleted successfully!', 'success');
+                loadPosts();
+            } catch (error) {
+                console.error("Error deleting post:", error);
+                showMessage('Error deleting post: ' + error.message, 'error');
+            }
+        }
+        
+        function showMessage(text, type) {
+            messageDiv.textContent = text;
+            messageDiv.className = `message ${type}`;
+            messageDiv.style.display = 'block';
+            
+            // Auto-hide after 5 seconds
+            setTimeout(() => {
+                messageDiv.style.display = 'none';
+            }, 5000);
+        }
+
+        // Refresh posts button
+        refreshPostsBtn.addEventListener('click', loadPosts);
+
+        // Initial load of posts when page loads
+        if (document.querySelector('.tab[data-tab="manage"]').classList.contains('active')) {
+            loadPosts();
+        }
+    </script>
+</body>
+</html>
+

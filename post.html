@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="kn">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ವೇದಾಭೇದ - ಲೇಖನ</title>
+    <link rel="stylesheet" href="assets/css/style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Baloo+Tamma+2:wght@400;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+        <script src="assets/js/config.js"></script>
+        <script src="assets/js/script.js" defer></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <header>
+        <div class="logo">
+            <h1>ವೇದಾಭೇದ</h1>
+            <p>Islamic & Hindu Studies</p>
+        </div>
+        <nav>
+            <button id="menuToggle"><i class="fas fa-bars"></i></button>
+            <ul class="nav-menu">
+                <li><a href="index.html">ಮುಖಪುಟ</a></li>
+                <li><a href="#" class="category" data-category="islam">ಇಸ್ಲಾಂ</a></li>
+                <li><a href="#" class="category" data-category="hindu">ಹಿಂದೂ</a></li>
+                <li><a href="#" class="category" data-category="comparative">ತುಲನಾತ್ಮಕ</a></li>
+                <li><a href="about.html">ನಮ್ಮ ಬಗ್ಗೆ</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <main class="post-page">
+        <article class="post-content">
+            <div class="post-header">
+                <div class="post-category" id="postCategory"></div>
+                <h1 id="postTitle">ಲೇಖನ ಶೀರ್ಷಿಕೆ</h1>
+                <div class="post-meta">
+                    <span id="postDate"><i class="far fa-calendar-alt"></i> ದಿನಾಂಕ</span>
+                    <span id="postAuthor"><i class="far fa-user"></i> ಲೇಖಕ</span>
+                </div>
+            </div>
+            
+            <div class="featured-image">
+                <img id="postImage" src="" alt="ಲೇಖನ ಚಿತ್ರ">
+            </div>
+            
+            <div class="post-body" id="postBody">
+                <!-- Content will be loaded dynamically -->
+            </div>
+            
+            <div class="footnotes" id="footnotes">
+                <h3>ಉಲ್ಲೇಖಗಳು</h3>
+                <!-- Footnotes will be loaded dynamically -->
+            </div>
+            
+            <div class="post-tags" id="postTags">
+                <!-- Tags will be loaded dynamically -->
+            </div>
+        </article>
+        
+        <div class="share-buttons">
+            <h3>ಹಂಚಿಕೊಳ್ಳಿ</h3>
+            <a href="#" class="share-btn facebook"><i class="fab fa-facebook-f"></i></a>
+            <a href="#" class="share-btn twitter"><i class="fab fa-twitter"></i></a>
+            <a href="#" class="share-btn whatsapp"><i class="fab fa-whatsapp"></i></a>
+            <a href="#" class="share-btn telegram"><i class="fab fa-telegram-plane"></i></a>
+        </div>
+        
+        <div class="related-posts">
+            <h3>ಸಂಬಂಧಿತ ಲೇಖನಗಳು</h3>
+            <div class="related-grid" id="relatedPosts">
+                <!-- Related posts will be loaded dynamically -->
+            </div>
+        </div>
+        
+        <div class="post-navigation">
+            <a href="#" id="prevPost" class="prev-post"><i class="fas fa-arrow-left"></i> ಹಿಂದಿನ ಲೇಖನ</a>
+            <a href="#" id="nextPost" class="next-post">ಮುಂದಿನ ಲೇಖನ <i class="fas fa-arrow-right"></i></a>
+        </div>
+    </main>
+
+    <footer>
+        <div class="footer-content">
+            <div class="footer-section">
+                <h3>ವೇದಾಭೇದ</h3>
+                <p>ಇಸ್ಲಾಂ ಮತ್ತು ಹಿಂದೂ ಧರ್ಮಗಳ ಬಗ್ಗೆ ವಿದ್ವಾಂಸರ ದೃಷ್ಟಿಕೋನದಿಂದ ವಿಶ್ಲೇಷಣೆ</p>
+            </div>
+            <div class="footer-section">
+                <h3>ಸಂಪರ್ಕ</h3>
+                <p><i class="fas fa-envelope"></i> info@vedadabheda.com</p>
+                <p><i class="fas fa-phone"></i> +91 123 456 7890</p>
+            </div>
+            <div class="footer-section">
+                <h3>ಅನುಸರಿಸಿ</h3>
+                <div class="social-icons">
+                    <a href="#"><i class="fab fa-facebook"></i></a>
+                    <a href="#"><i class="fab fa-twitter"></i></a>
+                    <a href="#"><i class="fab fa-instagram"></i></a>
+                    <a href="#"><i class="fab fa-youtube"></i></a>
+                </div>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>&copy; 2025 ವೇದಾಭೇದ. ಎಲ್ಲಾ ಹಕ್ಕುಗಳನ್ನು ಕಾಯ್ದಿರಿಸಲಾಗಿದೆ.</p>
+        </div>
+    </footer>
+</body>
+</html>
